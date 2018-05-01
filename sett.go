@@ -73,6 +73,7 @@ func (s *Sett) Get(key string) (string, error) {
 // SetAll creates/updates a map of key values in one go.
 // Dependent on size, multiple go routines will be used
 func (s *Sett) SetAll(batch map[string]string) error {
+	/* NOT IMPLEMENTED. WORK IN PROGRESS */
 	var err error
 	items := len(batch)
 	log.Println(items)
@@ -83,7 +84,10 @@ func (s *Sett) SetAll(batch map[string]string) error {
 // optional filter allows the table prefix on the key search
 // to be expanded
 func (s *Sett) GetAll(filter ...string) (map[string]string, error) {
-
+	/* NOT IMPLEMENTED. WORK IN PROGRESS */
+	var values = make(map[string]string)
+	var err error
+	return values, err
 }
 
 // Delete removes a key and its value from badger instance
@@ -99,7 +103,9 @@ func (s *Sett) Delete(key string) error {
 // Drop removes all keys with table prefix from badger,
 // the effect is as if a table was deleted
 func (s *Sett) Drop() error {
-	// get all keys with prefix and delete them
+	/* NOT IMPLEMENTED. WORK IN PROGRESS */
+	var err error
+	return err
 }
 
 // Close wraps badger Close method for defer
