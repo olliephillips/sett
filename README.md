@@ -6,9 +6,9 @@
 
 Based on badger v0.9.0 api. 
 
-Note. Tables are virtual - they are just a prefix on the key, but something I have found useful.
+Note. Tables are virtual - they are just a prefix on the key, but something I find useful.
 
-Strings used in prefence to byte slices. Again something I find more useful, with fewer conversion operations.
+Strings used in preference to byte slices. Again something I find more useful, with fewer conversion operations.
 
 ## API 
 
