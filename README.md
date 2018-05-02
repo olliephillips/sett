@@ -6,10 +6,6 @@
 
 Based on badger v0.9.0 api. 
 
-Note. Tables are virtual - they are just a prefix on the key, but something I find useful.
-
-Strings used in preference to byte slices. Again something I find more useful, with fewer conversion operations.
-
 ## API 
 
 Creating or opening a store with Sett is identical to badger
@@ -22,6 +18,17 @@ opts.ValueDir = "data/log"
 s := sett.Open(opts)
 defer s.Close()
 ```
+
+Set, get and delete a key. Strings used in preference to byte slices. 
+
+```
+s.Set("hello", "world")
+s.Get("hello")
+s.Delete("hello")
+
+### Tables
+
+Tables are virtual, simply a prefix on the key, but formalised through the Sett API. The aim being to making organisation, reasoning and usage, a little simpler.
 
 Add a key/value to "client" table
 
@@ -41,14 +48,8 @@ Delete key and value from "client" table
 s.Table("client").Delete("hello")
 ```
 
-
-### Optional syntax
-
-Targeting a table for subsequent commands
+Drop table including all keys
 
 ```
-client := s.Table("client")
-client.Set("hello", "world")
-client.Get("hello")
-client.Delete("hello")
+s.Table("client").Drop()
 ```

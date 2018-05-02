@@ -103,8 +103,27 @@ func (s *Sett) Delete(key string) error {
 // Drop removes all keys with table prefix from badger,
 // the effect is as if a table was deleted
 func (s *Sett) Drop() error {
-	/* NOT IMPLEMENTED. WORK IN PROGRESS */
 	var err error
+	var deleteKey []string
+	err = s.db.View(func(txn *badger.Txn) error {
+		it := txn.NewIterator(badger.DefaultIteratorOptions)
+		prefix := []byte(s.table)
+		for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
+			item := it.Item()
+			key := string(item.Key())
+			deleteKey = append(deleteKey, key)
+		}
+		return nil
+	})
+	err = s.db.Update(func(txn *badger.Txn) error {
+		for _, d := range deleteKey {
+			err = txn.Delete([]byte(d))
+			if err != nil {
+				break
+			}
+		}
+		return err
+	})
 	return err
 }
 
