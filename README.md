@@ -4,11 +4,11 @@
 
 **Work in progress**
 
-Based on badger v0.9.0 api. 
+Based on Badger v0.9.0 API. 
 
 ## API 
 
-Creating or opening a store with Sett is identical to badger
+Creating or opening a store with Sett is identical to Badger
 
 ```
 opts := sett.DefaultOptions
@@ -19,12 +19,13 @@ s := sett.Open(opts)
 defer s.Close()
 ```
 
-Set, get and delete a key. Strings used in preference to byte slices. 
+Simple set, get and delete a key. Strings used in preference to byte slices. 
 
 ```
 s.Set("hello", "world")
 s.Get("hello")
 s.Delete("hello")
+```
 
 ### Tables
 
