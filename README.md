@@ -74,3 +74,25 @@ s.Batchup("goodbye", "world")
 
 s.Table("client").SetBatch()
 ```
+
+## Get entire table, or subset of table
+
+Use `sett.Scan()` to return contents of virtual table or a subset of that table based on a prefix filter.
+
+Retrieving all key/values from the "client" table
+
+```
+scan, _ := s.Table("client").Scan()
+for k, v := range scan {
+	log.Println(k, v)
+}
+```
+
+Using a prefix filter to get a subset of a key/values from "client" table. In the below example the key prefix filter is "hello"
+
+```
+scan, _ := s.Table("client").Scan("hello")
+for k, v := range scan {
+	log.Println(k, v)
+}
+```
