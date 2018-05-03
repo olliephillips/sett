@@ -29,7 +29,7 @@ s.Delete("hello")
 
 ### Tables
 
-Tables are virtual, simply a prefix on the key, but formalised through the Sett API. The aim being to making organisation, reasoning and usage, a little simpler.
+Tables are virtual, simply a prefix on the key, but formalised through the Sett API. The aim being to make organisation, reasoning and usage, a little simpler.
 
 Add a key/value to "client" table
 
