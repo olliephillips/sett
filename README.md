@@ -57,7 +57,7 @@ s.Table("client").Drop()
 
 ### Batch Set
 
-Uses concurrent goroutines to split the insert payload, default is 50000 keys per goroutine. To change this set the `sett.BatchSize` per goutine before opening connection.
+Uses concurrent goroutines to split the insert payload, default is 50000 keys per goroutine. To change this set the `sett.BatchSize` variable before opening connection.
 
 ```
 sett.BatchSize = 100000
