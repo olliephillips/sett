@@ -49,8 +49,18 @@ Delete key and value from "client" table
 s.Table("client").Delete("hello")
 ```
 
-Drop table including all keys
+Drop "client" table including all keys
 
 ```
 s.Table("client").Drop()
+```
+
+Batch insert into "client" table
+
+```
+s.Batchup("hello", "world")
+s.Batchup("hello-again", "world")
+s.Batchup("goodbye", "world")
+
+s.Table("Client").SetBatch()
 ```

@@ -1,7 +1,9 @@
 package sett
 
 import (
+	"errors"
 	"log"
+	"sync"
 
 	"github.com/dgraph-io/badger"
 )
@@ -9,13 +11,19 @@ import (
 var (
 	DefaultOptions         = badger.DefaultOptions
 	DefaultIteratorOptions = badger.DefaultIteratorOptions
-	BatchSize              = 100000
+	BatchSize              = 50000
 )
 
 type Sett struct {
-	BatchSize int
+	batchSize int
 	db        *badger.DB
 	table     string
+	batch     []batchItem
+}
+
+type batchItem struct {
+	Key string
+	Val string
 }
 
 // Open is constructor function to create badger instance,
@@ -24,12 +32,13 @@ func Open(opts badger.Options) *Sett {
 	s := Sett{}
 
 	// defaults
-	s.BatchSize = BatchSize
+	s.batchSize = BatchSize
 
 	db, err := badger.Open(opts)
 	if err != nil {
 		log.Fatal("Open: create or open failed")
 	}
+
 	s.db = db
 	return &s
 }
@@ -70,13 +79,54 @@ func (s *Sett) Get(key string) (string, error) {
 	return string(val), err
 }
 
-// SetAll creates/updates a map of key values in one go.
-// Dependent on size, multiple go routines will be used
-func (s *Sett) SetAll(batch map[string]string) error {
-	/* NOT IMPLEMENTED. WORK IN PROGRESS */
+// Batchup is a helper for creating batches for use in SetBatch
+func (s *Sett) Batchup(key string, val string) {
+	//key = s.makeKey(key)
+	item := batchItem{key, val}
+	s.batch = append(s.batch, item)
+}
+
+// SetBatch creates/updates a batch using mutiple goroutines
+func (s *Sett) SetBatch() error {
+	var wg sync.WaitGroup
 	var err error
-	items := len(batch)
-	log.Println(items)
+	itemCount := len(s.batch)
+	if itemCount == 0 {
+		return errors.New("no batch ready")
+	}
+	batchCount := int(itemCount / s.batchSize)
+	mod := itemCount % s.batchSize
+	if mod != 0 {
+		batchCount++
+	}
+
+	wg.Add(batchCount)
+	for i := 0; i < batchCount; i++ {
+		var insert []batchItem
+		start := i * s.batchSize
+		end := ((i + 1) * s.batchSize) - 1
+		if i == (batchCount - 1) {
+			end = itemCount
+		}
+		insert = s.batch[start:end]
+		go s.batchSetter(insert, &wg)
+	}
+	wg.Wait()
+	s.batch = nil
+	return err
+}
+
+func (s *Sett) batchSetter(batch []batchItem, wg *sync.WaitGroup) error {
+	// goroutine assigned a slice of batchItem, needs more thought
+	// on error handling
+	var err error
+	defer wg.Done()
+	err = s.db.Update(func(txn *badger.Txn) error {
+		for _, el := range batch {
+			_ = txn.Set([]byte(s.makeKey(el.Key)), []byte(el.Val))
+		}
+		return err
+	})
 	return err
 }
 
@@ -130,6 +180,11 @@ func (s *Sett) Drop() error {
 // Close wraps badger Close method for defer
 func (s *Sett) Close() error {
 	return s.db.Close()
+}
+
+// Purge wraps badger PurgeOlderVersions method
+func (s *Sett) Purge() error {
+	return s.db.PurgeOlderVersions()
 }
 
 func (s *Sett) makeKey(key string) string {
