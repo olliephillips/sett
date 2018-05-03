@@ -12,7 +12,7 @@ import (
 var (
 	DefaultOptions         = badger.DefaultOptions
 	DefaultIteratorOptions = badger.DefaultIteratorOptions
-	BatchSize              = 50000
+	BatchSize              = 500
 )
 
 type Sett struct {
