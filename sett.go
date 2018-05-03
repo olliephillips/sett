@@ -3,6 +3,7 @@ package sett
 import (
 	"errors"
 	"log"
+	"strings"
 	"sync"
 
 	"github.com/dgraph-io/badger"
@@ -44,7 +45,7 @@ func Open(opts badger.Options) *Sett {
 // Table selects the table, operations are to be performed
 // on. Used as a prefix on the keys passed to badger
 func (s *Sett) Table(table string) *Sett {
-	s.table = table
+	s.table = strings.ToLower(table)
 	return s
 }
 

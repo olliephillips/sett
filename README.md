@@ -72,5 +72,5 @@ s.Batchup("hello", "world")
 s.Batchup("hello-again", "world")
 s.Batchup("goodbye", "world")
 
-s.Table("Client").SetBatch()
+s.Table("client").SetBatch()
 ```
