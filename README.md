@@ -75,7 +75,7 @@ s.Batchup("goodbye", "world")
 s.Table("client").SetBatch()
 ```
 
-## Get entire table, or subset of table
+### Get entire table, or subset of table
 
 Use `sett.Scan()` to return contents of virtual table or a subset of that table based on a prefix filter.
 
