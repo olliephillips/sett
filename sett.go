@@ -80,7 +80,6 @@ func (s *Sett) Get(key string) (string, error) {
 
 // Batchup is a helper for creating batches for use in SetBatch
 func (s *Sett) Batchup(key string, val string) {
-	//key = s.makeKey(key)
 	item := batchItem{key, val}
 	s.batch = append(s.batch, item)
 }
@@ -103,7 +102,7 @@ func (s *Sett) SetBatch() error {
 	for i := 0; i < batchCount; i++ {
 		var insert []batchItem
 		start := i * s.batchSize
-		end := ((i + 1) * s.batchSize) - 1
+		end := ((i + 1) * s.batchSize)
 		if i == (batchCount - 1) {
 			end = itemCount
 		}
@@ -129,14 +128,32 @@ func (s *Sett) batchSetter(batch []batchItem, wg *sync.WaitGroup) error {
 	return err
 }
 
-// GetAll returns all values from a (virtual) table. An
+// Scan returns all key/values from a (virtual) table. An
 // optional filter allows the table prefix on the key search
 // to be expanded
-func (s *Sett) GetAll(filter ...string) (map[string]string, error) {
-	/* NOT IMPLEMENTED. WORK IN PROGRESS */
-	var values = make(map[string]string)
+func (s *Sett) Scan(filter ...string) (map[string]string, error) {
+	var result = make(map[string]string)
 	var err error
-	return values, err
+	err = s.db.View(func(txn *badger.Txn) error {
+		var fullFilter string
+		it := txn.NewIterator(DefaultIteratorOptions)
+		defer it.Close()
+
+		fullFilter = s.table
+		if len(filter) == 1 {
+			fullFilter += filter[0]
+		}
+
+		for it.Seek([]byte(fullFilter)); it.ValidForPrefix([]byte(fullFilter)); it.Next() {
+			item := it.Item()
+			k := string(item.Key())
+			k = strings.TrimLeft(k, s.table)
+			v, _ := item.Value()
+			result[k] = string(v)
+		}
+		return err
+	})
+	return result, err
 }
 
 // Delete removes a key and its value from badger instance
@@ -155,7 +172,7 @@ func (s *Sett) Drop() error {
 	var err error
 	var deleteKey []string
 	err = s.db.View(func(txn *badger.Txn) error {
-		it := txn.NewIterator(badger.DefaultIteratorOptions)
+		it := txn.NewIterator(DefaultIteratorOptions)
 		prefix := []byte(s.table)
 		for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
 			item := it.Item()
