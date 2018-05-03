@@ -1,14 +1,12 @@
 # Sett
 
-## A golang package which offers a simple abstraction on Badger key/value store
+## A golang package which offers a simple abstraction on BadgerDB key/value store
 
-**Work in progress**
-
-Based on Badger v0.9.0 API. 
+Based on BadgerDB v0.9.0 API. 
 
 ## API 
 
-Creating or opening a store with Sett is identical to Badger
+Creating or opening a store with Sett is identical to BadgerDB
 
 ```
 opts := sett.DefaultOptions
