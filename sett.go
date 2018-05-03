@@ -30,7 +30,6 @@ type batchItem struct {
 // configure defaults and return struct instance
 func Open(opts badger.Options) *Sett {
 	s := Sett{}
-
 	// defaults
 	s.batchSize = BatchSize
 
@@ -38,7 +37,6 @@ func Open(opts badger.Options) *Sett {
 	if err != nil {
 		log.Fatal("Open: create or open failed")
 	}
-
 	s.db = db
 	return &s
 }
