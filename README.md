@@ -2,7 +2,8 @@
 
 ## A golang package which offers a simple abstraction on BadgerDB key/value store
 
-Based on BadgerDB v0.9.0 API. 
+Based on BadgerDB v1 API. 
+No support for v2 at this time.
 
 ## API 
 
