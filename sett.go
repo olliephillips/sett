@@ -179,6 +179,7 @@ func (s *Sett) Drop() error {
 			key := string(item.Key())
 			deleteKey = append(deleteKey, key)
 		}
+		it.Close()
 		return nil
 	})
 	err = s.db.Update(func(txn *badger.Txn) error {
@@ -198,9 +199,11 @@ func (s *Sett) Close() error {
 	return s.db.Close()
 }
 
+/* DEPRECATED */
 // Purge wraps badger PurgeOlderVersions method
 func (s *Sett) Purge() error {
-	return s.db.PurgeOlderVersions()
+	// return s.db.PurgeOlderVersions()
+	return nil
 }
 
 func (s *Sett) makeKey(key string) string {
